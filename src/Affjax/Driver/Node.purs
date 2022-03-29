@@ -14,6 +14,7 @@ module Affjax.Driver.Node
 import Prelude
 
 import Affjax (URL, Error(..), defaultRequest, Request, Response)
+import Affjax.Driver as AD
 import Affjax.Driver (AffjaxDriver)
 import Affjax.RequestBody as RequestBody
 import Affjax.RequestHeader (RequestHeader(..))
