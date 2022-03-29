@@ -52,7 +52,7 @@ jobs:
 
       - name: Check formatting
         run: |
-          eslint src
+          npx eslint src
           purs-tidy check src test
 
       - name: Verify Bower & Pulp
