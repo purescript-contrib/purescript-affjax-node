@@ -3,6 +3,7 @@ module Test.Main where
 import Prelude
 
 import Affjax as AX
+import Affjax.Driver.Node as ADN
 import Affjax.RequestBody as RequestBody
 import Affjax.ResponseFormat as ResponseFormat
 import Affjax.StatusCode (StatusCode(..))
@@ -66,43 +67,43 @@ main = void $ runAff (either (\e -> logShow e *> throwException e) (const $ log 
     let slow = prefix "/slow"
 
     A.log "GET /mirror: should be 200 OK"
-    (AX.request $ AX.defaultRequest { url = mirror }) >>= assertRight >>= \res -> do
+    (ADN.request $ AX.defaultRequest { url = mirror }) >>= assertRight >>= \res -> do
       assertEq ok200 res.status
 
     A.log "GET /does-not-exist: should be 404 Not found"
-    (AX.request $ AX.defaultRequest { url = doesNotExist }) >>= assertRight >>= \res -> do
+    (ADN.request $ AX.defaultRequest { url = doesNotExist }) >>= assertRight >>= \res -> do
       assertEq notFound404 res.status
 
     A.log "GET /not-json: invalid JSON with Foreign response should return an error"
-    AX.get ResponseFormat.json doesNotExist >>= assertLeft >>= case _ of
+    ADN.get ResponseFormat.json doesNotExist >>= assertLeft >>= case _ of
       AX.ResponseBodyError _ _ -> pure unit
       other -> logAny' other *> assertFail "Expected a ResponseBodyError"
 
     A.log "GET /not-json: invalid JSON with String response should be ok"
-    AX.get ResponseFormat.string notJson >>= assertRight >>= \res -> do
+    ADN.get ResponseFormat.string notJson >>= assertRight >>= \res -> do
       assertEq ok200 res.status
 
     A.log "GET /slow with timeout: should return an error"
-    (AX.request $ AX.defaultRequest { url = slow, timeout = Just (Milliseconds 100.0) }) >>= assertLeft >>= case _ of
+    (ADN.request $ AX.defaultRequest { url = slow, timeout = Just (Milliseconds 100.0) }) >>= assertLeft >>= case _ of
       AX.TimeoutError -> pure unit
       other -> logAny' other *> assertFail "Expected a TimeoutError"
 
     A.log "POST /mirror: should use the POST method"
-    AX.post ResponseFormat.json mirror (Just (RequestBody.string "test")) >>= assertRight >>= \res -> do
+    ADN.post ResponseFormat.json mirror (Just (RequestBody.string "test")) >>= assertRight >>= \res -> do
       assertEq ok200 res.status
       assertEq (Just "POST") (J.toString =<< FO.lookup "method" =<< J.toObject res.body)
 
     A.log "PUT with a request body"
     let content = "the quick brown fox jumps over the lazy dog"
-    AX.put ResponseFormat.json mirror (Just (RequestBody.string content)) >>= assertRight >>= \res -> do
+    ADN.put ResponseFormat.json mirror (Just (RequestBody.string content)) >>= assertRight >>= \res -> do
       assertEq ok200 res.status
       assertEq (Just "PUT") (J.toString =<< FO.lookup "method" =<< J.toObject res.body)
       assertEq (Just content) (J.toString =<< FO.lookup "body" =<< J.toObject res.body)
 
     A.log "Testing CORS, HTTPS"
-    AX.get ResponseFormat.json "https://cors-test.appspot.com/test" >>= assertRight >>= \res -> do
+    ADN.get ResponseFormat.json "https://cors-test.appspot.com/test" >>= assertRight >>= \res -> do
       assertEq ok200 res.status
 
     A.log "Testing cancellation"
-    forkAff (AX.post_ mirror (Just (RequestBody.string "do it now"))) >>= killFiber (error "Pull the cord!")
+    forkAff (ADN.post_ mirror (Just (RequestBody.string "do it now"))) >>= killFiber (error "Pull the cord!")
     assertMsg "Should have been canceled" true
