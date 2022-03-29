@@ -1,7 +1,7 @@
 import XHR from "xhr2";
 import urllib from "url";
 
-export const nodeDriver = {
+export const driver = {
   newXHR: function () {
     return new XHR();
   },

@@ -22,47 +22,47 @@ import Data.Either (Either)
 import Data.Maybe (Maybe)
 import Effect.Aff (Aff)
 
-foreign import nodeDriver :: AffjaxDriver
+foreign import driver :: AffjaxDriver
 
 -- | Makes a `GET` request to the specified URL.
 get :: forall a. ResponseFormat.ResponseFormat a -> URL -> Aff (Either Error (Response a))
-get = AD.get nodeDriver
+get = AD.get driver
 
 -- | Makes a `POST` request to the specified URL with the option to send data.
 post :: forall a. ResponseFormat.ResponseFormat a -> URL -> Maybe RequestBody.RequestBody -> Aff (Either Error (Response a))
-post = AD.post nodeDriver
+post = AD.post driver
 
 -- | Makes a `POST` request to the specified URL with the option to send data
 -- | and ignores the response body.
 post_ :: URL -> Maybe RequestBody.RequestBody -> Aff (Either Error Unit)
-post_ = AD.post_ nodeDriver
+post_ = AD.post_ driver
 
 -- | Makes a `PUT` request to the specified URL with the option to send data.
 put :: forall a. ResponseFormat.ResponseFormat a -> URL -> Maybe RequestBody.RequestBody -> Aff (Either Error (Response a))
-put = AD.put nodeDriver
+put = AD.put driver
 
 -- | Makes a `PUT` request to the specified URL with the option to send data
 -- | and ignores the response body.
 put_ :: URL -> Maybe RequestBody.RequestBody -> Aff (Either Error Unit)
-put_ = AD.put_ nodeDriver
+put_ = AD.put_ driver
 
 -- | Makes a `DELETE` request to the specified URL.
 delete :: forall a. ResponseFormat.ResponseFormat a -> URL -> Aff (Either Error (Response a))
-delete = AD.delete nodeDriver
+delete = AD.delete driver
 
 -- | Makes a `DELETE` request to the specified URL and ignores the response
 -- | body.
 delete_ :: URL -> Aff (Either Error Unit)
-delete_ = AD.delete_ nodeDriver
+delete_ = AD.delete_ driver
 
 -- | Makes a `PATCH` request to the specified URL with the option to send data.
 patch :: forall a. ResponseFormat.ResponseFormat a -> URL -> RequestBody.RequestBody -> Aff (Either Error (Response a))
-patch = AD.patch nodeDriver
+patch = AD.patch driver
 
 -- | Makes a `PATCH` request to the specified URL with the option to send data
 -- | and ignores the response body.
 patch_ :: URL -> RequestBody.RequestBody -> Aff (Either Error Unit)
-patch_ = AD.patch_ nodeDriver
+patch_ = AD.patch_ driver
 
 -- | Makes an HTTP request.
 -- |
@@ -82,4 +82,4 @@ patch_ = AD.patch_ nodeDriver
 -- | get json "/resource"
 -- | ```
 request :: forall a. Request a -> Aff (Either Error (Response a))
-request = AD.request nodeDriver
+request = AD.request driver
