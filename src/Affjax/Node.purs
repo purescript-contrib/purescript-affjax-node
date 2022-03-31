@@ -1,8 +1,21 @@
-module Affjax.Node where
+module Affjax.Node
+  ( driver
+  , request
+  , get
+  , post
+  , post_
+  , put
+  , put_
+  , delete
+  , delete_
+  , patch
+  , patch_
+  , module Exports
+  ) where
 
 import Prelude
 
-import Affjax (Error, Request, Response, URL)
+import Affjax (Request, defaultRequest, Response, Error(..), printError, URL) as Exports
 import Affjax as AX
 import Affjax (AffjaxDriver)
 import Affjax.RequestBody as RequestBody
