@@ -11,7 +11,7 @@ import Data.Either (Either)
 import Data.Maybe (Maybe)
 import Effect.Aff (Aff)
 
--- | Provides an Affjax driver that only works on the Node.js backend
+-- | Provides an Affjax driver that only works on Node.js.
 -- | Using this in a browser environment will cause errors.
 foreign import driver :: AffjaxDriver
 
