@@ -1,4 +1,4 @@
-module Affjax.Driver.Node where
+module Affjax.Node where
 
 import Prelude
 
