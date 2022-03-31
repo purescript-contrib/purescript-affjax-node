@@ -1,15 +1,4 @@
-module Affjax.Driver.Node
-  ( request
-  , get
-  , post
-  , post_
-  , put
-  , put_
-  , delete
-  , delete_
-  , patch
-  , patch_
-  ) where
+module Affjax.Driver.Node where
 
 import Prelude
 
@@ -22,6 +11,8 @@ import Data.Either (Either)
 import Data.Maybe (Maybe)
 import Effect.Aff (Aff)
 
+-- | Provides an Affjax driver that only works on the Node.js backend
+-- | Using this in a browser environment will cause errors.
 foreign import driver :: AffjaxDriver
 
 -- | Makes a `GET` request to the specified URL.
