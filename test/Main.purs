@@ -3,7 +3,7 @@ module Test.Main where
 import Prelude
 
 import Affjax as AX
-import Affjax.Node as ADN
+import Affjax.Node as AN
 import Affjax.RequestBody as RequestBody
 import Affjax.ResponseFormat as ResponseFormat
 import Affjax.StatusCode (StatusCode(..))
