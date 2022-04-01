@@ -17,7 +17,7 @@ import Prelude
 
 import Affjax (Request, defaultRequest, Response, Error(..), printError, URL) as Exports
 import Affjax as AX
-import Affjax (AffjaxDriver)
+import Affjax (Error, Request, Response, URL, AffjaxDriver)
 import Affjax.RequestBody as RequestBody
 import Affjax.ResponseFormat as ResponseFormat
 import Data.Either (Either)
