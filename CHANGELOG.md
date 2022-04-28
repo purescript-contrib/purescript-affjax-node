@@ -11,3 +11,7 @@ New features:
 Bugfixes:
 
 Other improvements:
+
+## [v1.0.0](https://github.com/purescript-contrib/purescript-affjax-node/releases/tag/v1.0.0) - 2022-04-28
+
+Initial release
