@@ -1,5 +1,5 @@
 { name = "affjax-node"
-, dependencies = [ "affjax" ]
+, dependencies = [ "aff", "affjax", "console", "prelude" ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
