@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/purescript-contrib/purescript-affjax-node/workflows/CI/badge.svg?branch=main)](https://github.com/purescript-contrib/purescript-affjax-node/actions?query=workflow%3ACI+branch%3Amain)
 [![Release](https://img.shields.io/github/release/purescript-contrib/purescript-affjax-node.svg)](https://github.com/purescript-contrib/purescript-affjax-node/releases)
-[![Pursuit](https://pursuit.purescript.org/packages/purescript-my-project/badge)](https://pursuit.purescript.org/packages/purescript-my-project)
+[![Pursuit](https://pursuit.purescript.org/packages/purescript-affjax-node/badge)](https://pursuit.purescript.org/packages/purescript-affjax-node)
 [![Maintainer: garyb](https://img.shields.io/badge/maintainer-garyb-teal.svg)](https://github.com/garyb)
 
 The library summary hasn't been written yet (contributions are welcome!). The library summary describes the library's purpose in one to three sentences.
@@ -23,7 +23,7 @@ The quick start hasn't been written yet (contributions are welcome!). The quick 
 
 affjax-node documentation is stored in a few places:
 
-1. Module documentation is [published on Pursuit](https://pursuit.purescript.org/packages/purescript-my-project).
+1. Module documentation is [published on Pursuit](https://pursuit.purescript.org/packages/purescript-affjax-node).
 2. Written documentation is kept in the [docs directory](./docs).
 3. Usage examples can be found in [the test suite](./test).
 
