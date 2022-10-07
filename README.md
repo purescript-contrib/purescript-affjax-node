@@ -15,6 +15,11 @@ Install affjax-node with [Spago](https://github.com/purescript/spago):
 spago install affjax-node
 ```
 
+And also install `xhr2` (see https://github.com/purescript-contrib/purescript-affjax-node/issues/5#issuecomment-1272142145)
+```sh
+npm i xhr2
+```
+
 ## Quick start
 
 The quick start hasn't been written yet (contributions are welcome!). The quick start covers a common, minimal use case for the library, whereas longer examples and tutorials are kept in the [docs directory](./docs).
