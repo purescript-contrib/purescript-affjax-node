@@ -15,7 +15,7 @@ Install affjax-node with [Spago](https://github.com/purescript/spago):
 spago install affjax-node
 ```
 
-And also install `xhr2` (see https://github.com/purescript-contrib/purescript-affjax-node/issues/5#issuecomment-1272142145)
+And also install `xhr2` (see [#5](https://github.com/purescript-contrib/purescript-affjax-node/issues/5#issuecomment-1272142145))
 ```sh
 npm init
 npm i xhr2
