@@ -1,5 +1,5 @@
 import XHR from "xhr2";
-import urllib from "url";
+import { URL, format } from "node:url";
 
 export const driver = {
   newXHR: function () {
@@ -7,10 +7,10 @@ export const driver = {
   },
   fixupUrl: function (url, xhr) {
     if (xhr.nodejsBaseUrl === null) {
-      var u = urllib.parse(url);
+      var u = new URL(url);
       u.protocol = u.protocol || "http:";
       u.hostname = u.hostname || "localhost";
-      return urllib.format(u);
+      return format(u);
     } else {
       return url || "/";
     }

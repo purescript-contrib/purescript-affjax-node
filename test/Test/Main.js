@@ -1,8 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function logAny(a) {
@@ -16,24 +16,24 @@ export function startServer(errback, callback) {
   var app = express();
 
   // Always make req.body available as a String
-  app.use(bodyParser.text(function() { return true; }));
+  app.use(bodyParser.text(function () { return true; }));
 
   app.use(express.static(__dirname));
 
-  app.get('/', function (req, res) {
+  app.get('/', function (_req, res) {
     res.send('<html><script src="tmp/test.js"></script></html>');
   });
 
-  app.get('/arrayview', function(req, res) {
+  app.get('/arrayview', function (_req, res) {
     res.send('TODO');
   });
 
-  app.get('/not-json', function(req, res) {
-    res.header({'content-type': 'text/plain'});
+  app.get('/not-json', function (_req, res) {
+    res.header({ 'content-type': 'text/plain' });
     res.send('This is not JSON');
   });
 
-  app.all('/mirror', function(req, res) {
+  app.all('/mirror', function (req, res) {
     res.json({
       headers: req.headers,
       body: req.body,
@@ -42,13 +42,13 @@ export function startServer(errback, callback) {
     });
   });
 
-  app.get('/slow', function(req, res) {
+  app.get('/slow', function (_req, res) {
     var date = Date.now();
     var currentDate = null;
     do {
       currentDate = Date.now();
     } while (currentDate - date < 2000);
-    res.header({'content-type': 'text/plain'});
+    res.header({ 'content-type': 'text/plain' });
     res.send('I hope I am not late!');
   });
 
@@ -59,7 +59,7 @@ export function startServer(errback, callback) {
     errback(error);
   });
 
-  return function (cancelError, onCancelerError, onCancelerSuccess) {
+  return function (_cancelError, _onCancelerError, onCancelerSuccess) {
     onCancelerSuccess();
   };
 }
@@ -70,7 +70,7 @@ export function stopServer(server) {
       if (err) errback(err);
       else callback();
     });
-    return function (cancelError, onCancelerError, onCancelerSuccess) {
+    return function (_cancelError, _onCancelerError, onCancelerSuccess) {
       onCancelerSuccess();
     };
   };

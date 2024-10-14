@@ -100,10 +100,14 @@ main = void $ runAff (either (\e -> logShow e *> throwException e) (const $ log 
       assertEq (Just "PUT") (J.toString =<< FO.lookup "method" =<< J.toObject res.body)
       assertEq (Just content) (J.toString =<< FO.lookup "body" =<< J.toObject res.body)
 
-    A.log "Testing CORS, HTTPS"
-    AN.get ResponseFormat.json "https://cors-test.appspot.com/test" >>= assertRight >>= \res -> do
-      assertEq ok200 res.status
-
     A.log "Testing cancellation"
     forkAff (AN.post_ mirror (Just (RequestBody.string "do it now"))) >>= killFiber (error "Pull the cord!")
     assertMsg "Should have been canceled" true
+
+    A.log "Testing CORS, HTTPS"
+    -- IF error `Unexpected token '<', "\n<html><hea"... is not valid JSON` THEN
+    -- Error: Server Error
+    -- The service you requested is not available yet.
+    -- Please try again in 30 seconds.
+    AN.get ResponseFormat.json "https://cors-test.appspot.com/test" >>= assertRight >>= \res -> do
+      assertEq ok200 res.status
