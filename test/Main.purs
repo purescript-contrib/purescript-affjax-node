@@ -7,24 +7,24 @@ import Affjax.Node as AN
 import Affjax.RequestBody as RequestBody
 import Affjax.ResponseFormat as ResponseFormat
 import Affjax.StatusCode (StatusCode(..))
-import Control.Monad.Error.Class (throwError)
+import Control.Monad.Error.Class (throwError, try)
 import Data.Argonaut.Core as J
 import Data.Either (Either(..), either)
 import Data.Maybe (Maybe(..))
 import Data.Time.Duration (Milliseconds(..))
 import Effect (Effect)
-import Effect.Aff (Aff, finally, forkAff, killFiber, runAff)
+import Effect.Aff (Aff, finally, forkAff, joinFiber, killFiber, runAff)
 import Effect.Aff.Compat (EffectFnAff, fromEffectFnAff)
 import Effect.Class (liftEffect)
 import Effect.Class.Console as A
 import Effect.Console (log, logShow)
-import Effect.Exception (error, throwException)
+import Effect.Exception (error, message, throwException)
 import Foreign.Object as FO
 
 foreign import logAny :: forall a. a -> Effect Unit
 
 foreign import data Server :: Type
-foreign import startServer :: EffectFnAff { server :: Server, port :: Int }
+foreign import startServer :: EffectFnAff { server :: Server, port :: Int, httpsPort :: Int }
 foreign import stopServer :: Server -> EffectFnAff Unit
 
 logAny' :: forall a. a -> Aff Unit
@@ -32,10 +32,6 @@ logAny' = liftEffect <<< logAny
 
 assertFail :: forall a. String -> Aff a
 assertFail = throwError <<< error
-
-assertMsg :: String -> Boolean -> Aff Unit
-assertMsg _ true = pure unit
-assertMsg msg false = assertFail msg
 
 assertRight :: forall a b. Either a b -> Aff b
 assertRight x = case x of
@@ -56,7 +52,7 @@ main = void $ runAff (either (\e -> logShow e *> throwException e) (const $ log 
   let ok200 = StatusCode 200
   let notFound404 = StatusCode 404
 
-  { server, port } <- fromEffectFnAff startServer
+  { server, port, httpsPort } <- fromEffectFnAff startServer
   finally (fromEffectFnAff (stopServer server)) do
     A.log ("Test server running on port " <> show port)
 
@@ -100,10 +96,13 @@ main = void $ runAff (either (\e -> logShow e *> throwException e) (const $ log 
       assertEq (Just "PUT") (J.toString =<< FO.lookup "method" =<< J.toObject res.body)
       assertEq (Just content) (J.toString =<< FO.lookup "body" =<< J.toObject res.body)
 
-    A.log "Testing CORS, HTTPS"
-    AN.get ResponseFormat.json "https://cors-test.appspot.com/test" >>= assertRight >>= \res -> do
+    A.log "Testing HTTPS with a local JSON response"
+    AN.get ResponseFormat.json ("https://localhost:" <> show httpsPort <> "/mirror") >>= assertRight >>= \res -> do
       assertEq ok200 res.status
+      assertEq (Just "GET") (J.toString =<< FO.lookup "method" =<< J.toObject res.body)
 
     A.log "Testing cancellation"
-    forkAff (AN.post_ mirror (Just (RequestBody.string "do it now"))) >>= killFiber (error "Pull the cord!")
-    assertMsg "Should have been canceled" true
+    fiber <- forkAff (AN.post_ mirror (Just (RequestBody.string "do it now")))
+    killFiber (error "Pull the cord!") fiber
+    canceled <- try (joinFiber fiber) >>= assertLeft
+    assertEq "Pull the cord!" (message canceled)

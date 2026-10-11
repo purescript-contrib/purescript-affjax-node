@@ -12,6 +12,9 @@ Bugfixes:
 
 Other improvements:
 
+- Migrate to registry-backed Spago, preserving published dependency ranges, and update repository tooling and CI.
+- Make the HTTPS test independent of external services and verify the cancellation result.
+
 ## [v1.0.0](https://github.com/purescript-contrib/purescript-affjax-node/releases/tag/v1.0.0) - 2022-04-28
 
 Initial release
