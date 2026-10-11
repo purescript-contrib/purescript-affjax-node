@@ -1,5 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
+import https from "https";
+import { readFileSync } from "fs";
+import XHR from "xhr2";
 
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
@@ -52,10 +55,31 @@ export function startServer(errback, callback) {
     res.send('I hope I am not late!');
   });
 
+  // Public, test-only credentials. Keep TLS verification enabled and trust only
+  // this fixture for the local HTTPS request.
+  var cert = readFileSync("test/fixtures/localhost-cert.pem");
+  var key = readFileSync("test/fixtures/localhost-key.pem");
+  var secureServer = https.createServer({ key, cert }, app);
+  var previousAgent = XHR.prototype.nodejsHttpsAgent;
+  var agent = new https.Agent({ ca: cert });
+  XHR.nodejsSet({ httpsAgent: agent });
+
   var server = app.listen(function () {
-    callback({ port: server.address().port, server: server });
+    secureServer.listen(0, "localhost", function () {
+      callback({
+        port: server.address().port,
+        httpsPort: secureServer.address().port,
+        server: { http: server, https: secureServer, agent, previousAgent }
+      });
+    });
   });
   server.on('error', function (error) {
+    errback(error);
+  });
+  secureServer.on('error', function (error) {
+    server.close();
+    agent.destroy();
+    XHR.nodejsSet({ httpsAgent: previousAgent });
     errback(error);
   });
 
@@ -66,9 +90,13 @@ export function startServer(errback, callback) {
 
 export function stopServer(server) {
   return function (errback, callback) {
-    server.close(function (err) {
-      if (err) errback(err);
-      else callback();
+    server.agent.destroy();
+    XHR.nodejsSet({ httpsAgent: server.previousAgent });
+    server.http.close(function (err) {
+      server.https.close(function (httpsErr) {
+        if (err || httpsErr) errback(err || httpsErr);
+        else callback();
+      });
     });
     return function (cancelError, onCancelerError, onCancelerSuccess) {
       onCancelerSuccess();
